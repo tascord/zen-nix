@@ -20,6 +20,33 @@
             inherit (source) pname version src;
             extraInstallCommands = ''
               mv $out/bin/${source.pname} $out/bin/zen-browser
+              
+              # Install desktop entry
+              install -Dm644 ${pkgs.writeText "zen-browser.desktop" ''
+                [Desktop Entry]
+                Name=Zen Browser
+                Comment=Privacy-focused browser that blocks trackers, ads, and other unwanted content
+                GenericName=Web Browser
+                Exec=$out/bin/zen-browser %U
+                Icon=zen-browser
+                Terminal=false
+                Type=Application
+                MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;x-scheme-handler/chrome;video/webm;application/x-xpinstall;
+                Categories=Network;WebBrowser;
+                Keywords=Internet;WWW;Browser;Web;Explorer;
+                StartupWMClass=zen-browser
+                StartupNotify=true
+              ''} $out/share/applications/zen-browser.desktop
+              
+              # Install icon using appimageTools' icon extraction
+              ${pkgs.appimageTools.extractType2 { inherit (source) src; }}/bin/extract-icon zen-browser $out/share/icons/hicolor/scalable/apps/zen-browser.png || \
+              install -Dm644 ${pkgs.writeText "zen-browser.svg" ''
+                <?xml version="1.0" encoding="UTF-8"?>
+                <svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="32" cy="32" r="30" fill="#4a90e2"/>
+                  <text x="32" y="40" font-family="Arial" font-size="24" fill="white" text-anchor="middle">Z</text>
+                </svg>
+              ''} $out/share/icons/hicolor/scalable/apps/zen-browser.svg
             '';
             meta = {
               description = "Privacy-focused browser that blocks trackers, ads, and other unwanted content while offering the best browsing experience!";
