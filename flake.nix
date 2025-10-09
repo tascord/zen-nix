@@ -22,21 +22,22 @@
               mv $out/bin/${source.pname} $out/bin/zen-browser
 
               # Install desktop entry
-              install -Dm644 ${pkgs.writeText "zen-browser.desktop" ''
-                [Desktop Entry]
-                Name=Zen Browser
-                Comment=Privacy-focused browser that blocks trackers, ads, and other unwanted content
-                GenericName=Web Browser
-                Exec=${placeholder "out"}/bin/zen-browser %U
-                Icon=zen-browser
-                Terminal=false
-                Type=Application
-                MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;x-scheme-handler/chrome;video/webm;application/x-xpinstall;
-                Categories=Network;WebBrowser;
-                Keywords=Internet;WWW;Browser;Web;Explorer;
-                StartupWMClass=zen-browser
-                StartupNotify=true
-              ''} $out/share/applications/zen-browser.desktop
+              mkdir -p $out/share/applications
+              cat > $out/share/applications/zen-browser.desktop << EOF
+[Desktop Entry]
+Name=Zen Browser
+Comment=Privacy-focused browser that blocks trackers, ads, and other unwanted content
+GenericName=Web Browser
+Exec=$out/bin/zen-browser %U
+Icon=zen-browser
+Terminal=false
+Type=Application
+MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;x-scheme-handler/chrome;video/webm;application/x-xpinstall;
+Categories=Network;WebBrowser;
+Keywords=Internet;WWW;Browser;Web;Explorer;
+StartupWMClass=zen-browser
+StartupNotify=true
+EOF
 
               # Install fallback icon
               install -Dm644 ${pkgs.writeText "zen-browser.svg" ''
