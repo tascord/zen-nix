@@ -1,0 +1,47 @@
+{
+    "aarch64": {
+        "cargoLocks": null,
+        "date": null,
+        "extract": null,
+        "name": "aarch64",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "name": null,
+            "sha256": "sha256-pjb8BAra3GXt9sw+FjIPaP2yzKM3f9jFbaIvdIOJ63Y=",
+            "type": "url",
+            "url": "https://github.com/zen-browser/desktop/releases/download/1.16.4b/zen-aarch64.AppImage"
+        },
+        "version": "1.16.4b"
+    },
+    "darwin": {
+        "cargoLocks": null,
+        "date": null,
+        "extract": null,
+        "name": "darwin",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "name": null,
+            "sha256": "sha256-jGOyE26JntBMQBu7w+pwHpKMFCd+lx6SyjapX0KCQUc=",
+            "type": "url",
+            "url": "https://github.com/zen-browser/desktop/releases/download/1.16.4b/zen.macos-universal.dmg"
+        },
+        "version": "1.16.4b"
+    },
+    "x64": {
+        "cargoLocks": null,
+        "date": null,
+        "extract": null,
+        "name": "x64",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "name": null,
+            "sha256": "sha256-+VRhJHb7RNAniuOWZAeUB5sTUjS0vu8DI0SOKJZbh/Q=",
+            "type": "url",
+            "url": "https://github.com/zen-browser/desktop/releases/download/1.16.4b/zen-x86_64.AppImage"
+        },
+        "version": "1.16.4b"
+    }
+}
