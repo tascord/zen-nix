@@ -27,7 +27,7 @@
                 Name=Zen Browser
                 Comment=Privacy-focused browser that blocks trackers, ads, and other unwanted content
                 GenericName=Web Browser
-                Exec=$out/bin/zen-browser %U
+                Exec=${placeholder "out"}/bin/zen-browser %U
                 Icon=zen-browser
                 Terminal=false
                 Type=Application
