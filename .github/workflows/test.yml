@@ -101,6 +101,54 @@ jobs:
         ls -la result/bin/zen-browser
         file result/bin/zen-browser
 
+    - name: Test desktop entry
+      run: |
+        # Check that desktop entry exists
+        test -f result/share/applications/zen-browser.desktop
+        echo "✓ Desktop entry file exists"
+
+        # Display desktop entry contents for debugging
+        echo "Desktop entry contents:"
+        cat result/share/applications/zen-browser.desktop
+
+        # Validate desktop entry format
+        sudo apt-get update && sudo apt-get install -y desktop-file-utils
+        desktop-file-validate result/share/applications/zen-browser.desktop
+        echo "✓ Desktop entry is valid"
+
+        # Check that Exec path points to the actual binary
+        EXEC_PATH=$(grep "^Exec=" result/share/applications/zen-browser.desktop | cut -d' ' -f1 | cut -d'=' -f2)
+        echo "Exec path from desktop entry: $EXEC_PATH"
+        if [ -x "$EXEC_PATH" ]; then
+          echo "✓ Executable referenced in desktop entry exists and is executable"
+        else
+          echo "✗ Executable not found or not executable: $EXEC_PATH"
+          exit 1
+        fi
+
+        # Verify the executable can show version
+        "$EXEC_PATH" --version
+        echo "✓ Executable can run and show version"
+
+        # Check that desktop entry has required fields
+        grep -q "^Name=" result/share/applications/zen-browser.desktop
+        grep -q "^Comment=" result/share/applications/zen-browser.desktop
+        grep -q "^GenericName=" result/share/applications/zen-browser.desktop
+        grep -q "^Icon=" result/share/applications/zen-browser.desktop
+        grep -q "^Categories=" result/share/applications/zen-browser.desktop
+        grep -q "^MimeType=" result/share/applications/zen-browser.desktop
+        echo "✓ All required desktop entry fields are present"
+
+    - name: Test icon installation
+      run: |
+        # Check that icon exists
+        test -f result/share/icons/hicolor/scalable/apps/zen-browser.svg
+        echo "✓ Icon file exists"
+
+        # Validate SVG format
+        file result/share/icons/hicolor/scalable/apps/zen-browser.svg | grep -q "SVG"
+        echo "✓ Icon is a valid SVG file"
+
     - name: Test flake metadata
       run: |
         nix flake metadata
