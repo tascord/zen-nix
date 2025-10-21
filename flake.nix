@@ -63,10 +63,12 @@
               extraInstallCommands = ''
                 mv $out/bin/${source.pname} $out/bin/zen-browser
 
-                # Install desktop entry
-                cp -r ${desktopItem}/share/applications $out/share
+                # Ensure share directories exist and install the .desktop file
+                mkdir -p $out/share/applications
+                install -Dm644 ${desktopItem}/share/applications/zen-browser.desktop $out/share/applications/zen-browser.desktop
 
-                # Install fallback icon
+                # Install fallback icon (ensure parent dirs first)
+                mkdir -p $out/share/icons/hicolor/scalable/apps
                 install -Dm644 ${icon} $out/share/icons/hicolor/scalable/apps/zen-browser.svg
               '';
               meta = {
