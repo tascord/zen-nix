@@ -16,45 +16,69 @@
           pkgs = nixpkgs.legacyPackages.${system};
 
           # AppImage package (Linux x86_64 and aarch64)
-          mkAppImage = source: pkgs.appimageTools.wrapType2 {
-            inherit (source) pname version src;
-            extraInstallCommands = ''
-              mv $out/bin/${source.pname} $out/bin/zen-browser
+          mkAppImage = source:
+            let
+              desktopItem = pkgs.makeDesktopItem {
+                name = "zen-browser";
+                desktopName = "Zen Browser";
+                comment = "Privacy-focused browser that blocks trackers, ads, and other unwanted content";
+                genericName = "Web Browser";
+                exec = "zen-browser %U";
+                icon = "zen-browser";
+                terminal = false;
+                type = "Application";
+                mimeTypes = [
+                  "text/html"
+                  "text/xml"
+                  "application/xhtml+xml"
+                  "application/xml"
+                  "application/rss+xml"
+                  "application/rdf+xml"
+                  "image/gif"
+                  "image/jpeg"
+                  "image/png"
+                  "x-scheme-handler/http"
+                  "x-scheme-handler/https"
+                  "x-scheme-handler/ftp"
+                  "x-scheme-handler/chrome"
+                  "video/webm"
+                  "application/x-xpinstall"
+                ];
+                categories = [ "Network" "WebBrowser" ];
+                keywords = [ "Internet" "WWW" "Browser" "Web" "Explorer" ];
+                startupWMClass = "zen-browser";
+                startupNotify = true;
+              };
 
-              # Install desktop entry
-              install -Dm644 ${pkgs.writeText "zen-browser.desktop" ''
-                [Desktop Entry]
-                Name=Zen Browser
-                Comment=Privacy-focused browser that blocks trackers, ads, and other unwanted content
-                GenericName=Web Browser
-                Exec=$out/bin/zen-browser %U
-                Icon=zen-browser
-                Terminal=false
-                Type=Application
-                MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;x-scheme-handler/chrome;video/webm;application/x-xpinstall;
-                Categories=Network;WebBrowser;
-                Keywords=Internet;WWW;Browser;Web;Explorer;
-                StartupWMClass=zen-browser
-                StartupNotify=true
-              ''} $out/share/applications/zen-browser.desktop
-
-              # Install fallback icon
-              install -Dm644 ${pkgs.writeText "zen-browser.svg" ''
+              icon = pkgs.writeText "zen-browser.svg" ''
                 <?xml version="1.0" encoding="UTF-8"?>
                 <svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="32" cy="32" r="30" fill="#4a90e2"/>
                   <text x="32" y="40" font-family="Arial" font-size="24" fill="white" text-anchor="middle">Z</text>
                 </svg>
-              ''} $out/share/icons/hicolor/scalable/apps/zen-browser.svg
-            '';
-            meta = {
-              description = "Privacy-focused browser that blocks trackers, ads, and other unwanted content while offering the best browsing experience!";
-              homepage = "https://github.com/zen-browser/desktop";
-              platforms = [ "aarch64-linux" "x86_64-linux" ];
-              sourceProvenance = with pkgs.lib.sourceTypes; [ binaryNativeCode ];
-              license = pkgs.lib.licenses.mpl20;
+              '';
+            in
+            pkgs.appimageTools.wrapType2 {
+              inherit (source) pname version src;
+              extraInstallCommands = ''
+                mv $out/bin/${source.pname} $out/bin/zen-browser
+
+                # Ensure share directories exist and install the .desktop file
+                mkdir -p $out/share/applications
+                install -Dm644 ${desktopItem}/share/applications/zen-browser.desktop $out/share/applications/zen-browser.desktop
+
+                # Install fallback icon (ensure parent dirs first)
+                mkdir -p $out/share/icons/hicolor/scalable/apps
+                install -Dm644 ${icon} $out/share/icons/hicolor/scalable/apps/zen-browser.svg
+              '';
+              meta = {
+                description = "Privacy-focused browser that blocks trackers, ads, and other unwanted content while offering the best browsing experience!";
+                homepage = "https://github.com/zen-browser/desktop";
+                platforms = [ "aarch64-linux" "x86_64-linux" ];
+                sourceProvenance = with pkgs.lib.sourceTypes; [ binaryNativeCode ];
+                license = pkgs.lib.licenses.mpl20;
+              };
             };
-          };
 
           # DMG package (macOS) - using undmg
           mkDMG = source: pkgs.stdenv.mkDerivation {
